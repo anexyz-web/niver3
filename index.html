@@ -1,0 +1,2213 @@
+<html>
+<head>
+  <base href>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Festa de Anivers&#xe1;rio - Isa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Satisfy&amp;display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      width: 100vw;
+      background: url('https://i.ibb.co/W2LB0X9/09f8b2c2-45e8-4eef-aa15-924b69e8ef8c.jpg') no-repeat center center;
+      background-size: cover;
+      transition: background-image 1s ease;
+    }
+
+    #game-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    #dialogue-box {
+      width: 90%;
+      background: rgba(0, 0, 0, 0.8); 
+      color: white;
+      border: 2px solid white;
+      border-radius: 10px;
+      position: absolute;
+      bottom: 15%;  
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 15px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      z-index: 1000;
+    }
+
+    #choices-container {
+      display: none;
+      width: 90%;
+      position: absolute;
+      bottom: 5%;
+      left: 50%;
+      transform: translateX(-50%);
+      gap: 10px;
+      flex-direction: column;
+    }
+
+    .choice-btn {
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      border: 2px solid white;
+      border-radius: 10px;
+      padding: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: transform 0.2s;
+    }
+
+    .choice-btn:hover {
+      transform: scale(1.02);
+    }
+
+    #character-name {
+      font-weight: bold;
+      color: #9370DB;
+    }
+
+    #character-sprite {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      height: 85vh;
+    }
+
+    #gift-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #gift-box {
+      display: none;
+      width: 200px;
+      height: 200px;
+      background: #888888;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    #gift-box:hover {
+      transform: scale(1.05); 
+    }
+
+    #gift-image {
+      display: none;
+      max-width: 90%;
+      max-height: 90vh;
+      position: relative;
+      border-radius: 10px;
+    }
+
+    #close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 2001;
+      padding: 5px;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.5);
+    }
+
+    #close-button:hover {
+      background: rgba(0,0,0,0.8);
+    }
+
+    .gift-container {
+      position: relative;
+    }
+
+    .navigation-button {
+      position: fixed;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      z-index: 1001;
+      transition: transform 0.3s ease;
+    }
+
+    .navigation-button img {
+      width: 60px;
+      height: auto;
+    }
+
+    .navigation-button:hover {
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .button-tooltip {
+      position: absolute;
+      right: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      margin-right: 10px;
+      font-size: 16px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .navigation-button:hover .button-tooltip {
+      opacity: 1;
+    }
+
+    #letter-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #letter-content {
+      font-family: 'Satisfy', cursive;
+      font-size: 1.2em;
+      line-height: 1.5;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 80%;
+      position: relative;
+      white-space: pre-line;
+    }
+
+    @media (max-width: 768px) {
+      #dialogue-box, #choices-container {
+        width: 95%;
+        font-size: 1rem;
+        bottom: 15%;  
+        padding: 12px;
+      }
+      
+      #character-sprite {
+        height: 60vh;
+      }
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const kitchenDialogues = [{
+        name: "Alexy",
+        text: "...",
+        nameColor: "#3f65c6",
+        sprite: "https://i.ibb.co/ypvRSZZ/Emotion-22.png"
+      }, {
+        name: "Castiel",
+        text: "Denovo?",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/vdfH7Yx/1046-4fa606589933c050-1.png"
+      }, {
+        name: "Isa",
+        text: "[escolha]",
+        showChoices: true,
+        sprite: "https://i.ibb.co/kctG8Td/Lysandre-E35.png"
+      }, {
+        name: "Isa",
+        text: "(Não sei o que mais me surpreende, ele sempre perder esse bloco de notas, ou ele nunca conseguir achar o bloco)",
+        sprite: "https://i.ibb.co/kctG8Td/Lysandre-E35.png"
+      }, {
+        name: "Isa",
+        text: "(Não estou vendo nenhum presente em suas mãos)",
+        sprite: "https://i.ibb.co/VStNPwn/Lysandre-E34.png"
+      }, {
+        name: "Isa",
+        text: "(Não seria uma surpresa se ele também tiver perdido o presente...)",
+        sprite: "https://i.ibb.co/kctG8Td/Lysandre-E35.png"
+      }, {
+        name: "Castiel",
+        text: "Tá, vamos procurar esse bloco...De novo.",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/vdfH7Yx/1046-4fa606589933c050-1.png"
+      }, {
+        name: "Rosalya",
+        text: "Podemos nos dividir, Assim cobrimos mais lugares",
+        nameColor: "#9ca3d6",
+        sprite: "https://i.ibb.co/VLNBqQK/Rosalya-Baile2.png"
+      }, {
+        name: "Isa",
+        text: "Vou procurar no jardim!",
+        sprite: "https://i.ibb.co/yhX1LFd/Lysandre-E36-1.png"
+      }, {
+        name: "Castiel",
+        text: "Te acompanho.",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/vDQ7NyS/1047-10773900545b8730-1.png"
+      }, {
+        name: "Rosalya",
+        text: "...",
+        nameColor: "#9ca3d6",
+        sprite: "https://i.ibb.co/B6bkBmS/Rosalya-Baile5.png"
+      }, {
+        name: "Alexy",
+        text: "...",
+        nameColor: "#3f65c6",
+        sprite: "https://i.ibb.co/Qr418FT/Emotion-20.png"
+      }, {
+        name: "Lysandre",
+        text: "...",
+        nameColor: "#6c8c94",
+        sprite: "https://i.ibb.co/wQJYFz9/Lysandre-E38.png"
+      }, {
+        name: "Castiel",
+        text: "Pra ajudar na busca, claro.",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/vdfH7Yx/1046-4fa606589933c050-1.png"
+      }, {
+        name: "Castiel",
+        text: "Este lugar até que me lembra o jardim da escola...",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png",
+        background: "https://i.ibb.co/55xPxWk/Clube-de-jardinagem.jpg"
+      }, {
+        name: "Isa",
+        text: "É verdade...Especialmente com essas flores",
+        sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+      }, {
+        name: "Castiel",
+        text: "Ei, você também tá lembrando daquele dia?",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+      }, {
+        name: "Isa",
+        text: "[escolha1]",
+        showChoices2: true,
+        sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+      }, {
+        name: "Castiel",
+        text: "Sabe... Aquele jardim da escola sempre foi especial pra mim depois daquele dia...",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/0JZX2Nk/1047-10773900545b8730-1.png"
+      }, {
+        name: "Isa",
+        text: "(Meu coração ainda dispara do mesmo jeito quando ele fica assim tão perto...)",
+        sprite: "https://i.ibb.co/0JZX2Nk/1047-10773900545b8730-1.png"
+      }, {
+        name: "Isa",
+        text: "(Eu sinto minhas bochechas queimarem)",
+        sprite: "https://i.ibb.co/0JZX2Nk/1047-10773900545b8730-1.png"
+      }, {
+        name: "Castiel",
+        text: "Garota, o que foi? Não me diga que você está apaixonada?",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+      }, {
+        name: "Isa",
+        text: "(Tenho a impressão que já ouvi ele dizer isso uma vez...)",
+        sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+      }, {
+        name: "Castiel",
+        text: "Engraçado como algumas coisas não mudam,né?",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/0JZX2Nk/1047-10773900545b8730-1.png"
+      }, {
+        name: "Isa",
+        text: "[escolha3]",
+        showChoices3: true,
+        sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+      }, {
+        name: "Isa",
+        text: "(ouço Rosalya gritando de longe)",
+        sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+      }, {
+        name: "Rosalya",
+        text: "ACHEI ALGUMA COISA!",
+        sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+      }, {
+        name: "Castiel",
+        text: "Bem na hora...",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/Cv0msc9/1046-4fa606589933c050-1.png"
+      }, {
+        name: "Isa",
+        text: "Vamos ver o que ela encontrou, depois podemos continuar...",
+        sprite: "https://i.ibb.co/Cv0msc9/1046-4fa606589933c050-1.png"
+      }, {
+        name: "Isa",
+        text: "(Tomara que ela tenha encontrado, é o que espero depois de nos atrapalhar...)",
+        sprite: "https://i.ibb.co/Cv0msc9/1046-4fa606589933c050-1.png"
+      }, {
+        name: "Alexy",
+        text: "Lysandre já procurou em todos os bolsos? Às vezes está com ele mesmo...",
+        nameColor: "#3f65c6",
+        sprite: "https://i.ibb.co/ypvRSZZ/Emotion-22.png",
+        background: "https://i.ibb.co/C8jzNNV/6c51017b-a671-4bcc-bf13-68014bd35c77.jpg"
+      }, {
+        name: "Castiel",
+        text: "Já vi ele revirar o bolso umas três vezes só hoje.",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/Cv0msc9/1046-4fa606589933c050-1.png"
+      }, {
+        name: "Isa",
+        text: "(Rosalya está segurando algumas folhas, será que são do bloco de notas?)",
+        sprite: "https://i.ibb.co/Cv0msc9/1046-4fa606589933c050-1.png"
+      }, {
+        name: "Rosalya",
+        text: "Olha só o que eu achei caído aqui!",
+        nameColor: "#9ca3d6",
+        sprite: "https://i.ibb.co/LY3YDM2/Rosalya-Baile1.png"
+      }, {
+        name: "Alexy",
+        text: "São do Lysandre?",
+        nameColor: "#3f65c6",
+        sprite: "https://i.ibb.co/3kB2NwQ/Emotion-19.png"
+      }, {
+        name: "Lysandre",
+        text: "Não...Devem ser de alguém da banda.",
+        nameColor: "#6c8c94",
+        sprite: "https://i.ibb.co/VStNPwn/Lysandre-E34.png"
+      }, {
+        name: "Kim",
+        text: "Então ainda estamos na estaca zero.",
+        nameColor: "#b9f6ea",
+        sprite: "https://i.ibb.co/jrGKcHK/Kim2.png"
+      }, {
+        name: "Isa",
+        text: "(Não tem como o bloco ter desaparecido, deve estar aqui em algum lugar!)",
+        sprite: "https://i.ibb.co/jrGKcHK/Kim2.png"
+      }, {
+        name: "Rosalya",
+        text: "Precisamos ser mais estratégicos! Onde mais você esteve?",
+        nameColor: "#9ca3d6",
+        sprite: "https://i.ibb.co/LY3YDM2/Rosalya-Baile1.png"
+      }, {
+        name: "Lysandre",
+        text: "Estive perto da piscina depois passei pela área do buffet",
+        nameColor: "#6c8c94",
+        sprite: "https://i.ibb.co/kctG8Td/Lysandre-E35.png"
+      }, {
+        name: "Rosalya",
+        text: "Certo, eu, Alexy, Kim e Violette vamos para o buffet",
+        nameColor: "#9ca3d6",
+        sprite: "https://i.ibb.co/VLNBqQK/Rosalya-Baile2.png"
+      }, {
+        name: "Rosalya",
+        text: "E a Isa, Castiel e Lysandre vão para a piscina",
+        nameColor: "#9ca3d6",
+        sprite: "https://i.ibb.co/B6bkBmS/Rosalya-Baile5.png"
+      }, {
+        name: "Rosalya",
+        text: "Estão de acordo?",
+        nameColor: "#9ca3d6",
+        sprite: "https://i.ibb.co/VLNBqQK/Rosalya-Baile2.png"
+      }, {
+        name: "Rosalya",
+        text: "...",
+        nameColor: "#9ca3d6",
+        sprite: "https://i.ibb.co/VLNBqQK/Rosalya-Baile2.png"
+      }, {
+        name: "Rosalya",
+        text: "Certo, então vamos!",
+        nameColor: "#9ca3d6",
+        sprite: "https://i.ibb.co/B6bkBmS/Rosalya-Baile5.png"
+      }, {
+        name: "Isa",
+        text: "(A área da piscina está lindamente decorada com luzes... O reflexo na água cria uma atmosfera quase mágica)",
+        sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png",
+        background: "https://i.ibb.co/5WGJmvm/ca07e857bb25c4675a0e9d503cd96db8.jpg"
+      }, {
+        name: "Castiel",
+        text: "Pelo menos aqui está mais tranquilo que lá dentro",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+      }, {
+        name: "Lysandre",
+        text: "Tenho certeza que passei por aqui antes...",
+        nameColor: "#6c8c94",
+        sprite: "https://i.ibb.co/kctG8Td/Lysandre-E35.png"
+      }, {
+        name: "Isa",
+        text: "(Lysandre parece cada vez mais preocupado... Deve ter algo realmente importante naquele bloco.)",
+        sprite: "https://i.ibb.co/kctG8Td/Lysandre-E35.png"
+      }, {
+        name: "Iris",
+        text: "Isa! Que bom que te encontrei!",
+        nameColor: "#E7684C",
+        sprite: "https://i.ibb.co/dghtr4q/85.png"
+      }, {
+        name: "Isa",
+        text: "(Iris está linda no seu maiô azul...Ela sempre teve um sorriso tão acolhedor.)",
+        sprite: "https://i.ibb.co/dghtr4q/85.png"
+      }, {
+        name: "Iris",
+        text: "Eu tava guardando isso pra te entregar...",
+        nameColor: "#E7684C",
+        sprite: "https://i.ibb.co/dMwknrz/42-Sem-T-tulo-20250119114916.png"
+      }, {
+        name: "Iris",
+        text: "É um porta-retrato... Pra você guardar as memórias especiais dessa noite!",
+        nameColor: "#E7684C",
+        sprite: "https://i.ibb.co/dghtr4q/85.png",
+        showGift: true
+      }, {
+        name: "Isa",
+        text: "(O porta-retrato tem uma linda foto nossa... Iris sempre foi atenciosa assim.)",
+        sprite: "https://i.ibb.co/dghtr4q/85.png"
+      }, {
+        name: "Castiel",
+        text: "Ei, acho que vi algo refletindo ali perto da borda...",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/Cv0msc9/1046-4fa606589933c050-1.png"
+      }, {
+        name: "Isa",
+        text: "(O reflexo das luzes na água torna difícil distinguir as coisas...)",
+        sprite: "https://i.ibb.co/Cv0msc9/1046-4fa606589933c050-1.png"
+      }, {
+        name: "Lysandre",
+        text: "Onde exatamente?",
+        nameColor: "#6c8c94",
+        sprite: "https://i.ibb.co/VStNPwn/Lysandre-E34.png"
+      }, {
+        name: "Isa",
+        text: "Acho que é só o reflexo das luzes...",
+        sprite: "https://i.ibb.co/VStNPwn/Lysandre-E34.png"
+      }, {
+        name: "Iris",
+        text: "Ah, vocês estão procurando algo? Posso ajudar!",
+        nameColor: "#E7684C",
+        sprite: "https://i.ibb.co/dMwknrz/42-Sem-T-tulo-20250119114916.png"
+      }, {
+        name: "Isa",
+        text: "Estamos procurando o bloco do Lysandre...",
+        sprite: "https://i.ibb.co/dMwknrz/42-Sem-T-tulo-20250119114916.png"
+      }, {
+        name: "Iris",
+        text: "Quanto mais olhos procurando, melhor!",
+        nameColor: "#E7684C",
+        sprite: "https://i.ibb.co/dMwknrz/42-Sem-T-tulo-20250119114916.png"
+      }, {
+        name: "Castiel",
+        text: "Já procuramos em praticamente todo o lugar...",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/Cv0msc9/1046-4fa606589933c050-1.png"
+      }, {
+        name: "Isa",
+        text: "(É verdade... será que os outros tiveram mais sorte?)",
+        sprite: "https://i.ibb.co/Cv0msc9/1046-4fa606589933c050-1.png"
+      }, {
+        name: "Lysandre",
+        text: "Talvez devêssemos ir para o buffet...",
+        nameColor: "#6c8c94",
+        sprite: "https://i.ibb.co/VStNPwn/Lysandre-E34.png"
+      }, {
+        name: "Iris",
+        text: "Ah, Acabei de vir de lá! Vi a Rosalya e os outros procurando algo também.",
+        nameColor: "#E7684C",
+        sprite: "https://i.ibb.co/dMwknrz/42-Sem-T-tulo-20250119114916.png"
+      }, {
+        name: "Isa",
+        text: "(Tomara que eles tenham encontrado, nada contra o Lysandre, mas já estou de saco cheio desse bloco de notas.)",
+        sprite: "https://i.ibb.co/dMwknrz/42-Sem-T-tulo-20250119114916.png"
+      }, {
+        name: "Castiel",
+        text: "Então é melhor irmos até lá, já que não encontramos nada.",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/Cv0msc9/1046-4fa606589933c050-1.png"
+      }, {
+        name: "Iris",
+        text: "Eu vou ficar por aqui, o Thomas está na piscina e eu preciso ficar de olho nele.",
+        nameColor: "#E7684C",
+        sprite: "https://i.ibb.co/6mB3xDM/42-Sem-T-tulo-20250119184118.png"
+      }, {
+        name: "Isa",
+        text: "É uma pena. Se você achar algo nos avise!",
+        sprite: "https://i.ibb.co/6mB3xDM/42-Sem-T-tulo-20250119184118.png"
+      }, {
+        name: "Iris",
+        text: "Pode deixar!",
+        nameColor: "#E7684C",
+        sprite: "https://i.ibb.co/dghtr4q/85.png"
+      }, {
+        name: "Isa",
+        text: "(Eu, Castiel e Lysandre fomos para área do buffet encontrar com os outros)",
+        sprite: "https://i.ibb.co/dghtr4q/85.png"
+      }, {
+        name: "Rosalya",
+        text: "Ah, aí estão vocês!",
+        nameColor: "#9ca3d6",
+        sprite: "https://i.ibb.co/T2nHy1f/37-Sem-T-tulo-20250109131304.png",
+        background: "https://i.ibb.co/Gn8JZdv/3d21764041e4ad2c729d542a328f2cdc.jpg"
+      }, {
+        name: "Isa",
+        text: "(Rosalya não tem uma boa cara pra quem encontrou o bloco...)",
+        sprite: "https://i.ibb.co/T2nHy1f/37-Sem-T-tulo-20250109131304.png"
+      }, {
+        name: "Rosalya",
+        text: "Acharam alguma coisa?",
+        nameColor: "#9ca3d6",
+        sprite: "https://i.ibb.co/LY3YDM2/Rosalya-Baile1.png"
+      }, {
+        name: "Castiel",
+        text: "Então vocês não acharam nada?",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/Cv0msc9/1046-4fa606589933c050-1.png"
+      }, {
+        name: "Castiel",
+        text: "Maldita hora que eu aceitei procurar esse bloco de notas",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/Cv0msc9/1046-4fa606589933c050-1.png"
+      }, {
+        name: "Lysandre",
+        text: "Me desculpem, eu posso continuar procurando sozinho.",
+        nameColor: "#6c8c94",
+        sprite: "https://i.ibb.co/VStNPwn/Lysandre-E34.png"
+      }, {
+        name: "Isa",
+        text: "Não seja bobo, vamos continuar ajudando. O Castiel só está de graça!",
+        sprite: "https://i.ibb.co/VStNPwn/Lysandre-E34.png"
+      }, {
+        name: "Rosalya",
+        text: "Você tem certeza que trouxe esse bloco de notas!?",
+        nameColor: "#9ca3d6",
+        sprite: "https://i.ibb.co/b6MBXFr/36-Sem-T-tulo-20250108173159.png"
+      }, {
+        name: "Lysandre",
+        text: "Tenho, eu conferi antes de sair de casa.",
+        nameColor: "#6c8c94",
+        sprite: "https://i.ibb.co/VStNPwn/Lysandre-E34.png"
+      }, {
+        name: "Isa",
+        text: "(Vejo Leigh se aproximando, provavelmente veio falar com Rosalya.)",
+        sprite: "https://i.ibb.co/VStNPwn/Lysandre-E34.png"
+      }, {
+        name: "Leigh",
+        text: "Lysandre, estava indo buscar mais bebidas no carro e encontrei isso no banco de trás...",
+        nameColor: "#D1B870",
+        sprite: "https://i.ibb.co/NLh0wrS/Leigh5.png"
+      }, {
+        name: "Isa",
+        text: "(Eu não acredito, é o bloco de notas!)",
+        sprite: "https://i.ibb.co/NLh0wrS/Leigh5.png"
+      }, {
+        name: "Isa",
+        text: "(O rosto do Lysandre se iluminou completamente!)",
+        sprite: "https://i.ibb.co/zZd9dVv/49-f6b057ea70eff21c.png"
+      }, {
+        name: "Lysandre",
+        text: "Estava ai o tempo todo...",
+        nameColor: "#6c8c94",
+        sprite: "https://i.ibb.co/VStNPwn/Lysandre-E34.png"
+      }, {
+        name: "Alexy",
+        text: "E a gente procurando por todo o salão!",
+        nameColor: "#3f65c6",
+        sprite: "https://i.ibb.co/Qr418FT/Emotion-20.png"
+      }, {
+        name: "Castiel",
+        text: "Bem típico do Lysandre mesmo.",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+      }, {
+        name: "Rosalya",
+        text: "Então..agora que encontramos, o que tinha de tão importante nesse bloco?",
+        nameColor: "#9ca3d6",
+        sprite: "https://i.ibb.co/B6bkBmS/Rosalya-Baile5.png"
+      }, {
+        name: "Isa",
+        text: "(Lysandre parece nervoso de repente...ele está até um pouco corado)",
+        sprite: "https://i.ibb.co/cvJ07Yd/Lysandre-E36.png"
+      }, {
+        name: "Isa",
+        text: "(Lysandre começa a folhear o bloco)",
+        sprite: "https://i.ibb.co/kctG8Td/Lysandre-E35.png"
+      }, {
+        name: "Lysandre",
+        text: "Na verdade...",
+        nameColor: "#6c8c94",
+        sprite: "https://i.ibb.co/VStNPwn/Lysandre-E34.png"
+      }, {
+        name: "Isa",
+        text: "(Ele para em uma página em específico, o que será que é?)",
+        sprite: "https://i.ibb.co/VStNPwn/Lysandre-E34.png"
+      }, {
+        name: "Lysandre",
+        text: "Era algo para você, Isa.",
+        nameColor: "#6c8c94",
+        sprite: "https://i.ibb.co/cvJ07Yd/Lysandre-E36.png"
+      }, {
+        name: "Castiel",
+        text: "Agora entendi por que você estava tão desesperado, perdeu o presente, não é?",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+      }, {
+        name: "Isa",
+        text: "(O Lysandre estende o bloco de notas para eu pegar)",
+        sprite: "https://i.ibb.co/cvJ07Yd/Lysandre-E36.png"
+      }, {
+        name: "Lysandre",
+        text: "É...é uma música. Seu presente de aniversário.",
+        nameColor: "#6c8c94",
+        sprite: "https://i.ibb.co/VStNPwn/Lysandre-E34.png"
+      }, {
+        name: "Isa",
+        text: "(Uma música... ele escreveu uma música para mim!)",
+        sprite: "https://i.ibb.co/cvJ07Yd/Lysandre-E36.png"
+      }, {
+        name: "Isa",
+        text: "(Minhas mãos tremem um pouco ao segurar o bloco. A letra dele, sempre tão elegante... cada palavra parece ter sido escolhida com tanto cuidado.)",
+        sprite: "https://i.ibb.co/cvJ07Yd/Lysandre-E36.png"
+      }, {
+        name: "Rosalya",
+        text: "*Sussurro* Vamos dar um espacinho...",
+        nameColor: "#9ca3d6",
+        sprite: "https://i.ibb.co/VLNBqQK/Rosalya-Baile2.png"
+      }, {
+        name: "Isa",
+        text: "(É uma música sobre amizade... sobre todos os momentos que compartilhamos. Cada verso fala sobre nossas histórias juntos, sobre como nosso grupo se tornou tão especial... Como ele consegue transformar memórias em algo tão bonito?)",
+        sprite: "https://i.ibb.co/cvJ07Yd/Lysandre-E36.png"
+      }, {
+        name: "Isa",
+        text: "(Tem partes que falam sobre todos nós, sobre como cada um trouxe algo único para o grupo. É uma celebração da nossa amizade... é tão sincero. Meus olhos começam a ficar marejados.)",
+        sprite: "https://i.ibb.co/cvJ07Yd/Lysandre-E36.png"
+      }, {
+        name: "Lysandre",
+        text: "Está...tudo bem?",
+        nameColor: "#6c8c94",
+        sprite: "https://i.ibb.co/wQJYFz9/Lysandre-E38.png"
+      }, {
+        name: "Isa",
+        text: "[novaescolha]",
+        showChoices4: true,
+        sprite: "https://i.ibb.co/cvJ07Yd/Lysandre-E36.png"
+      }, {
+        name: "Isa",
+        text: "(o Castiel passa seus braços pelos meus ombros...)",
+        sprite: "https://i.ibb.co/0JZX2Nk/1047-10773900545b8730-1.png"
+      }, {
+        name: "Kim",
+        text: "Quem diria que aquela garota nova na escola se tornaria tão especial pra gente?",
+        nameColor: "#b9f6ea",
+        sprite: "https://i.ibb.co/jrGKcHK/Kim2.png"
+      }, {
+        name: "Isa",
+        text: "(Cada um deles... Cada momento que compartilhamos... não poderia pedir por amigos melhores.)",
+        sprite: "https://i.ibb.co/jrGKcHK/Kim2.png"
+      }, {
+        name: "Rosalya",
+        text: "Bom, agora que o mistério foi resolvido, que tal aproveitarmos a festa?",
+        nameColor: "#9ca3d6",
+        sprite: "https://i.ibb.co/jkdS059/Rosalya-Baile4.png"
+      }, {
+        name: "Isa",
+        text: "(É verdade...ainda tem tanto da festa pra aproveitar)",
+        sprite: "https://i.ibb.co/jkdS059/Rosalya-Baile4.png"
+      }, {
+        name: "Alexy",
+        text: "Ah, Ali está o Armin! Eu tava procurando por ele.",
+        nameColor: "#3f65c6",
+        sprite: "https://i.ibb.co/3kB2NwQ/Emotion-19.png"
+      }, {
+        name: "Isa",
+        text: "Alexy, eu vou com você! Ainda não vi o Armin hoje...",
+        sprite: "https://i.ibb.co/3kB2NwQ/Emotion-19.png"
+      }, {
+        name: "Alexy",
+        text: "Claro! Ele tava falando que queria te entregar algo especial",
+        nameColor: "#3f65c6",
+        sprite: "https://i.ibb.co/Qr418FT/Emotion-20.png"
+      }, {
+        name: "Armin",
+        text: "Mas que droga de jogo!",
+        nameColor: "#3D3C6B",
+        sprite: "https://i.ibb.co/f2s2gZt/46-Sem-T-tulo-20250121105657.png",
+        background: "https://i.ibb.co/tqBh9yW/87cae154a8df350d88d379b5e1673b7d.jpg"
+      }, {
+        name: "Alexy",
+        text: "Maninho! Olha quem eu trouxe!",
+        nameColor: "#3f65c6",
+        sprite: "https://i.ibb.co/Qr418FT/Emotion-20.png"
+      }, {
+        name: "Armin",
+        text: "Isa! Finalmente!",
+        nameColor: "#3D3C6B",
+        sprite: "https://i.ibb.co/kmPrZ8Q/46-Sem-T-tulo-20250121110123.png"
+      }, {
+        name: "Isa",
+        text: "(Armin pega um pacote...)",
+        sprite: "https://i.ibb.co/kmPrZ8Q/46-Sem-T-tulo-20250121110123.png"
+      }, {
+        name: "Armin",
+        text: "Feliz aniversário! Espero que goste!",
+        nameColor: "#3D3C6B",
+        sprite: "https://i.ibb.co/GvGTbxZ/46-Sem-T-tulo-20250121110507.png"
+      }, {
+        name: "Isa",
+        text: "(Um Nintendo DS não acredito!)",
+        sprite: "https://i.ibb.co/GvGTbxZ/46-Sem-T-tulo-20250121110507.png",
+        showGameGift: true
+      }, {
+        name: "Armin",
+        text: "A Ane ama jogar ace attorney no dela. Você conhece? É incrível!",
+        nameColor: "#3D3C6B",
+        sprite: "https://i.ibb.co/kmPrZ8Q/46-Sem-T-tulo-20250121110123.png"
+      }, {
+        name: "Isa",
+        text: "Por falar em Ane... como você pretende pedir ela em casamento?",
+        sprite: "https://i.ibb.co/kmPrZ8Q/46-Sem-T-tulo-20250121110123.png"
+      }, {
+        name: "Armin",
+        text: "Poxa, tá cedo ainda!",
+        nameColor: "#3D3C6B",
+        sprite: "https://i.ibb.co/GvGTbxZ/46-Sem-T-tulo-20250121110507.png"
+      }, {
+        name: "Armin",
+        text: "Mas já pensei sim...",
+        nameColor: "#3D3C6B",
+        sprite: "https://i.ibb.co/6bg9qcC/46-Sem-T-tulo-20250121111828.png"
+      }, {
+        name: "Armin",
+        text: "Eu falo assim pra ela: você quer comer ou jogar Starfield? Se ela responder come, a gente se come, e se ela querer jogar Starfield eu faço um jogo e peço ela em casamento, aí é chave papai!",
+        nameColor: "#3D3C6B",
+        sprite: "https://i.ibb.co/kmPrZ8Q/46-Sem-T-tulo-20250121110123.png"
+      }, {
+        name: "Isa",
+        text: "Não seria melhor perguntar se ela quer comer ou jogar ace attorney?",
+        sprite: "https://i.ibb.co/kmPrZ8Q/46-Sem-T-tulo-20250121110123.png"
+      }, {
+        name: "Armin",
+        text: "Ai você acaba com a piada né",
+        nameColor: "#3D3C6B",
+        sprite: "https://i.ibb.co/f2s2gZt/46-Sem-T-tulo-20250121105657.png"
+      }, {
+        name: "Priya",
+        text: "Isa! Finalmente te encontrei!",
+        nameColor: "#9AFFFF",
+        sprite: "https://i.ibb.co/HprB3sR/Priya-Baile2.png"
+      }, {
+        name: "Priya",
+        text: "Mesmo em sua própria festa você não para quieta, não é?",
+        nameColor: "#9AFFFF",
+        sprite: "https://i.ibb.co/tJk1b85/Priya-Baile2a.png"
+      }, {
+        name: "Priya",
+        text: "Fiquei andando pelo salão inteiro te procurando. Alguns hábitos nunca mudam mesmo, Desde a escola você sempre foi assim, andando pelos corredores...",
+        nameColor: "#9AFFFF",
+        sprite: "https://i.ibb.co/fQ58s7D/Priya-Baile3.png"
+      }, {
+        name: "Isa",
+        text: "[escolhas5]",
+        showChoices5: true,
+        sprite: "https://i.ibb.co/fQ58s7D/Priya-Baile3.png"
+      }, {
+        name: "Isa",
+        text: "(Priya pega uma pequena caixa da bolsa)",
+        sprite: "https://i.ibb.co/tJk1b85/Priya-Baile2a.png"
+      }, {
+        name: "Priya",
+        text: "Trouxe algo especial da índia para você",
+        nameColor: "#9AFFFF",
+        sprite: "https://i.ibb.co/Fn5XQR7/Priya-Baile9.png"
+      }, {
+        name: "Isa",
+        text: "(A Priya sempre traz as coisas mais interessantes de suas viagens...)",
+        sprite: "https://i.ibb.co/Fn5XQR7/Priya-Baile9.png"
+      }, {
+        name: "Priya",
+        text: "São pulseiras tradicionais...",
+        nameColor: "#9AFFFF",
+        sprite: "https://i.ibb.co/tJk1b85/Priya-Baile2a.png",
+        showPriyaGift: true
+      }, {
+        name: "Isa",
+        text: "(Ela coloca uma das pulseiras no meu pulso)",
+        sprite: "https://i.ibb.co/fQ58s7D/Priya-Baile3.png"
+      }, {
+        name: "Priya",
+        text: "Cada cor tem um significado diferente.",
+        nameColor: "#9AFFFF",
+        sprite: "https://i.ibb.co/tJk1b85/Priya-Baile2a.png"
+      }, {
+        name: "Priya",
+        text: "A vermelha representa a força, a dourada é para prosperidade...",
+        nameColor: "#9AFFFF",
+        sprite: "https://i.ibb.co/Fn5XQR7/Priya-Baile9.png"
+      }, {
+        name: "Isa",
+        text: "[novaescolha6]",
+        showChoices6: true,
+        sprite: "https://i.ibb.co/Fn5XQR7/Priya-Baile9.png"
+      }, {
+        name: "Isa",
+        text: "(???)",
+        sprite: "https://i.ibb.co/tJk1b85/Priya-Baile2a.png"
+      }, {
+        name: "Isa",
+        text: "(Que barulho foi esse?)",
+        sprite: "https://i.ibb.co/tJk1b85/Priya-Baile2a.png"
+      }, {
+        name: "Nina",
+        text: "Psst! Vocês viram pra onde o Lysandre foi?",
+        nameColor: "#eb7fbc",
+        sprite: "https://i.ibb.co/cht2Gkgs/212-55913975438e96de.png"
+      }, {
+        name: "Isa",
+        text: "(O quê? Como ela entrou aqui?)",
+        sprite: "https://i.ibb.co/cht2Gkgs/212-55913975438e96de.png"
+      }, {
+        name: "Isa",
+        text: "[escolhas7]",
+        showChoices7: true,
+        sprite: "https://i.ibb.co/cht2Gkgs/212-55913975438e96de.png"
+      }, {
+        name: "Isa",
+        text: "(Nina tirou um caderno decorado da bolsa)",
+        sprite: "https://i.ibb.co/cht2Gkgs/212-55913975438e96de.png"
+      }, {
+        name: "Nina",
+        text: "Olha! Eu escrevi um poema inspirado em Edgar Allan Poe! Usei até perfume de rosas negras nas páginas...",
+        nameColor: "#eb7fbc",
+        sprite: "https://i.ibb.co/cht2Gkgs/212-55913975438e96de.png"
+      }, {
+        name: "Isa",
+        text: "[Escolha8]",
+        showChoices8: true,
+        sprite: "https://i.ibb.co/cht2Gkgs/212-55913975438e96de.png"
+      }, {
+        name: "Priya",
+        text: "Nina, que tal nos mostrar o poema primeiro?",
+        nameColor: "#9AFFFF",
+        sprite: "https://i.ibb.co/tJk1b85/Priya-Baile2a.png"
+      }, {
+        name: "Isa",
+        text: "(Seu tom é gentil mas é firme...)",
+        sprite: "https://i.ibb.co/tJk1b85/Priya-Baile2a.png"
+      }, {
+        name: "Isa",
+        text: "[Escolha9]",
+        showChoices9: true,
+        sprite: "https://i.ibb.co/tJk1b85/Priya-Baile2a.png"
+      }, {
+        name: "Isa",
+        text: "(Nina começa a abrir seu caderno animadamente)",
+        sprite: "https://i.ibb.co/ymjdBbLf/214-2b72c9cde980a344.png"
+      }, {
+        name: "Nina",
+        text: "É sobre um corvo que carrega mensagens de amor através da noite...",
+        nameColor: "#eb7fbc",
+        sprite: "https://i.ibb.co/ymjdBbLf/214-2b72c9cde980a344.png"
+      }, {
+        name: "Isa",
+        text: "(Típico da Nina misturar romance com gótico... mas tenho que admitir que ela se esforça)",
+        sprite: "https://i.ibb.co/ymjdBbLf/214-2b72c9cde980a344.png"
+      }, {
+        name: "Isa",
+        text: "( Nina começa a declarar seu poema dramaticamente)",
+        sprite: "https://i.ibb.co/ymjdBbLf/214-2b72c9cde980a344.png"
+      }, {
+        name: "Nina",
+        text: "\"Nas sombras da noite vitoriana, um corvo mensageiro do destino...\"",
+        nameColor: "#eb7fbc",
+        sprite: "https://i.ibb.co/zVJ0krjg/670-e50a8a05682948f9.png"
+      }, {
+        name: "Isa",
+        text: "(Priya secretamente faz um sinal para alguém?)",
+        sprite: "https://i.ibb.co/Fn5XQR7/Priya-Baile9.png"
+      }, {
+        name: "Isa",
+        text: "(A Priya sempre tem um plano... mas o que ela está pensando?)",
+        sprite: "https://i.ibb.co/Fn5XQR7/Priya-Baile9.png"
+      }, {
+        name: "Rosalya",
+        text: "Nina! Que surpresa encontrar você aqui!",
+        nameColor: "#9ca3d6",
+        sprite: "https://i.ibb.co/jkdS059/Rosalya-Baile4.png"
+      }, {
+        name: "Isa",
+        text: "(Nina para sua \"declaração\"...)",
+        sprite: "https://i.ibb.co/jkdS059/Rosalya-Baile4.png"
+      }, {
+        name: "Nina",
+        text: "Rosa! Você acha que o Lysandre vai gostar? Eu pesquisei tanto sobre a era vitoriana e...",
+        nameColor: "#eb7fbc",
+        sprite: "https://i.ibb.co/cht2Gkgs/212-55913975438e96de.png"
+      }, {
+        name: "Rosalya",
+        text: "Sabe Nina, o Leigh está organizando um sarau de poesia no próximo mês...",
+        nameColor: "#9ca3d6",
+        sprite: "https://i.ibb.co/VLNBqQK/Rosalya-Baile2.png"
+      }, {
+        name: "Isa",
+        text: "(Ah! Agora entendi o plano da Priya...)",
+        sprite: "https://i.ibb.co/VLNBqQK/Rosalya-Baile2.png"
+      }, {
+        name: "Nina",
+        text: "Um sarau? Como aqueles da época vitoriana?",
+        nameColor: "#eb7fbc",
+        sprite: "https://i.ibb.co/cht2Gkgs/212-55913975438e96de.png"
+      }, {
+        name: "Priya",
+        text: "Seria o ambiente perfeito para sua poesia, não acha? Muito mais apropriado que uma festa de aniversário...",
+        nameColor: "#9AFFFF",
+        sprite: "https://i.ibb.co/HprB3sR/Priya-Baile2.png"
+      }, {
+        name: "Isa",
+        text: "(É incrível como a Priya consegue resolver as coisas sem criar conflito... ela sempre sabe exatamente o que dizer)",
+        sprite: "https://i.ibb.co/HprB3sR/Priya-Baile2.png"
+      }, {
+        name: "Isa",
+        text: "(A nina fechou o caderno, ela parece um pouco pensativa)",
+        sprite: "https://i.ibb.co/HprB3sR/Priya-Baile2.png"
+      }, {
+        name: "Nina",
+        text: "Bem... um sarau seria mais romântico... e mais adequado à época...",
+        nameColor: "#eb7fbc",
+        sprite: "https://i.ibb.co/cht2Gkgs/212-55913975438e96de.png"
+      }, {
+        name: "Priya",
+        text: "Às vezes, só precisamos redirecionar o entusiasmo das pessoas...",
+        nameColor: "#9AFFFF",
+        sprite: "https://i.ibb.co/Fn5XQR7/Priya-Baile9.png"
+      }, {
+        name: "Isa",
+        text: "(Rosalya sai com a nina em direção a saída...)",
+        sprite: "https://i.ibb.co/LY3YDM2/Rosalya-Baile1.png"
+      }, {
+        name: "Isa",
+        text: "(Espero que ela consiga resolver isso sem problemas)",
+        sprite: "https://i.ibb.co/LY3YDM2/Rosalya-Baile1.png"
+      }, {
+        name: "Isa",
+        text: "(A Nina é meio que uma surpresa, né? Eu não esperava que ela aparecesse assim. Mas, enfim, Rosalya está cuidando disso.)",
+        sprite: null
+      }, {
+        name: "Isa",
+        text: "(Ah, Rosalya está voltando)",
+        sprite: "https://i.ibb.co/LY3YDM2/Rosalya-Baile1.png"
+      }, {
+        name: "Isa",
+        text: "(Espero que tenha tudo dado certo e que a Nina tenha ido embora sem mais confusão)",
+        sprite: "https://i.ibb.co/LY3YDM2/Rosalya-Baile1.png"
+      }, {
+        name: "Rosalya",
+        text: "Ela realmente não quer ir embora. Disse que esperou semanas por essa chance de ver o Lysandre...",
+        nameColor: "#9ca3d6",
+        sprite: "https://i.ibb.co/b6MBXFr/36-Sem-T-tulo-20250108173159.png"
+      }, {
+        name: "Isa",
+        text: "(Típico da Nina... Quando se trata do Lysandre, ela é mais teimosa que o Castiel!)",
+        sprite: "https://i.ibb.co/b6MBXFr/36-Sem-T-tulo-20250108173159.png"
+      }, {
+        name: "Priya",
+        text: "Talvez possamos chegar a um acordo",
+        nameColor: "#9AFFFF",
+        sprite: "https://i.ibb.co/HprB3sR/Priya-Baile2.png"
+      }, {
+        name: "Castiel",
+        text: "Ei, o que está acontecendo aqui? Vi a garota obcecada pelo Lysandre dando voltas pelo salão",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/Cv0msc9/1046-4fa606589933c050-1.png"
+      }, {
+        name: "Isa",
+        text: "(O Castiel sempre aparece nas horas mais...interessantes)",
+        sprite: "https://i.ibb.co/Cv0msc9/1046-4fa606589933c050-1.png"
+      }, {
+        name: "Isa",
+        text: "[escolha10]",
+        showChoices10: true,
+        sprite: "https://i.ibb.co/Cv0msc9/1046-4fa606589933c050-1.png"
+      }, {
+        name: "Rosalya",
+        text: "E se a Nina pudesse ficar... mas com a condição de não perseguir o Lysandre?",
+        nameColor: "#9ca3d6",
+        sprite: "https://i.ibb.co/VLNBqQK/Rosalya-Baile2.png"
+      }, {
+        name: "Castiel",
+        text: "Como se ela conseguisse...",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+      }, {
+        name: "Priya",
+        text: "Na verdade, tenho uma ideia. Castiel, você poderia nos ajudar?",
+        nameColor: "#9AFFFF",
+        sprite: "https://i.ibb.co/tJk1b85/Priya-Baile2a.png"
+      }, {
+        name: "Isa",
+        text: "(Priya pedindo ajuda ao Castiel? Isso vai ser interessante...)",
+        sprite: "https://i.ibb.co/tJk1b85/Priya-Baile2a.png"
+      }, {
+        name: "Castiel",
+        text: "Eu? O que tenho a ver com essa história?",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/Cv0msc9/1046-4fa606589933c050-1.png"
+      }, {
+        name: "Isa",
+        text: "Pensei que fosse o segurança da festa!",
+        sprite: "https://i.ibb.co/Cv0msc9/1046-4fa606589933c050-1.png"
+      }, {
+        name: "Castiel",
+        text: "Tudo bem... Qual o plano?",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+      }, {
+        name: "Priya",
+        text: "E se disséssemos à Nina que ela pode ficar na festa como fotógrafa oficial? Ela ama documentar tudo sobre o Lysandre...",
+        nameColor: "#9AFFFF",
+        sprite: "https://i.ibb.co/tJk1b85/Priya-Baile2a.png"
+      }, {
+        name: "Isa",
+        text: "(Entendi. Dar à Nina um propósito que a mantenha ocupada)",
+        sprite: "https://i.ibb.co/tJk1b85/Priya-Baile2a.png"
+      }, {
+        name: "Castiel",
+        text: "E meu papel nessa história seria...?",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/Cv0msc9/1046-4fa606589933c050-1.png"
+      }, {
+        name: "Priya",
+        text: "Você poderia \"supervisionar\" para garantir que ela tire fotos de todos, não apenas do Lysandre",
+        nameColor: "#9AFFFF",
+        sprite: "https://i.ibb.co/fQ58s7D/Priya-Baile3.png"
+      }, {
+        name: "Isa",
+        text: "[escolha11]",
+        showChoices11: true,
+        sprite: "https://i.ibb.co/fQ58s7D/Priya-Baile3.png"
+      }, {
+        name: "Isa",
+        text: "(Nunca imaginei ver o Castiel concordando em \"supervisionar\" a Nina...)",
+        sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+      }, {
+        name: "Isa",
+        text: "(Ah, Lá foi Rosa foi buscar a Nina para resolvermos isso tudo...)",
+        sprite: "https://i.ibb.co/LY3YDM2/Rosalya-Baile1.png"
+      }, {
+        name: "Isa",
+        text: "(Essa Nina, viu... Aparece donada, sem convite, só porque quer ver o Lysandre.)",
+        sprite: "https://i.ibb.co/spMmN7YC/49-Sem-T-tulo-20250406063555.png"
+      }, {
+        name: "Isa",
+        text: "(Bom... quem sou eu para julgar? Eu entrei no vestiário só para ver a tatuagem dele...)",
+        sprite: "https://i.ibb.co/spMmN7YC/49-Sem-T-tulo-20250406063555.png"
+      }, {
+        name: "Isa",
+        text: "(Rosalya está retornando junto da Nina.)",
+        sprite: "https://i.ibb.co/zVJ0krjg/670-e50a8a05682948f9.png"
+      }, {
+        name: "Isa",
+        text: "(Nina parece um pouco confusa.)",
+        sprite: "https://i.ibb.co/cht2Gkgs/212-55913975438e96de.png"
+      }, {
+        name: "Nina",
+        text: "Vocês... Querem que eu seja a fotógrafa da festa?",
+        nameColor: "#eb7fbc",
+        sprite: "https://i.ibb.co/cht2Gkgs/212-55913975438e96de.png"
+      }, {
+        name: "Priya",
+        text: "Claro! Você sempre tem as melhores fotos do Lysandre no seu fanclub, não é? Seria perfeito ter alguém com seu... talento documentando a festa.",
+        nameColor: "#9AFFFF",
+        sprite: "https://i.ibb.co/tJk1b85/Priya-Baile2a.png"
+      }, {
+        name: "Nina",
+        text: "Mas isso significa que posso ficar? De verdade?",
+        nameColor: "#eb7fbc",
+        sprite: "https://i.ibb.co/ymjdBbLf/214-2b72c9cde980a344.png"
+      }, {
+        name: "Castiel",
+        text: "Com duas condições.",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/Cv0msc9/1046-4fa606589933c050-1.png"
+      }, {
+        name: "Castiel",
+        text: "Primeira: fotos de todos, não só do Lysandre.",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/Cv0msc9/1046-4fa606589933c050-1.png"
+      }, {
+        name: "Castiel",
+        text: "Segunda: nada de poemas ou declarações hoje. Guarde para o sarau.",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+      }, {
+        name: "Isa",
+        text: "(O Castiel está levando isso a sério!)",
+        sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+      }, {
+        name: "Nina",
+        text: "Bem... posso guardar o poema para o sarau... E posso tirar algumas fotos dos amigos do Lysandre...",
+        nameColor: "#eb7fbc",
+        sprite: "https://i.ibb.co/cht2Gkgs/212-55913975438e96de.png"
+      }, {
+        name: "Isa",
+        text: "[escolha12]",
+        showChoices12: true,
+        sprite: "https://i.ibb.co/cht2Gkgs/212-55913975438e96de.png"
+      }, {
+        name: "Isa",
+        text: "(Nina guarda o caderno e saca seu celular, já procurando o melhor ângulo para fotos)",
+        sprite: "https://i.ibb.co/ymjdBbLf/214-2b72c9cde980a344.png"
+      }, {
+        name: "Castiel",
+        text: "Vou garantir que ela não cause problemas. Te vejo na pista de dança mais tarde?",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/0JZX2Nk/1047-10773900545b8730-1.png"
+      }, {
+        name: "Isa",
+        text: "(Um convite para dançar do Castiel... essa noite está ficando cada vez melhor!)",
+        sprite: "https://i.ibb.co/0JZX2Nk/1047-10773900545b8730-1.png"
+      }, {
+        name: "Isa",
+        text: "[escolha13]",
+        showChoices13: true,
+        sprite: "https://i.ibb.co/0JZX2Nk/1047-10773900545b8730-1.png"
+      }, {
+        name: "Priya",
+        text: "Vamos voltar para a festa? Acho que resolvemos tudo por aqui.",
+        nameColor: "#9AFFFF",
+        sprite: "https://i.ibb.co/tJk1b85/Priya-Baile2a.png"
+      }, {
+        name: "Isa",
+        text: "(De problema à solução criativa... com amigos assim, não há obstáculo que não possamos superar!)",
+        sprite: "https://i.ibb.co/tJk1b85/Priya-Baile2a.png"
+      }, {
+        name: "Isa",
+        text: "(Após o ocorrido todos se dirigem para o salão)",
+        sprite: "https://i.ibb.co/spMmN7YC/49-Sem-T-tulo-20250406063555.png",
+        background: "https://i.ibb.co/Gn8JZdv/3d21764041e4ad2c729d542a328f2cdc.jpg"
+      }, {
+        name: "Rosalya",
+        text: "*olhando ao redor* Nossa, a festa está cada vez mais animada! Olha só quantas pessoas vieram!",
+        nameColor: "#9ca3d6",
+        sprite: "https://i.ibb.co/VLNBqQK/Rosalya-Baile2.png"
+      }, {
+        name: "Isa",
+        text: "(Nina já está ocupada tirando fotos discretamente, com Castiel mantendo um olho nela)",
+        sprite: "https://i.ibb.co/VLNBqQK/Rosalya-Baile2.png"
+      }, {
+        name: "Isa",
+        text: "(Que alívio ter resolvido a situação da Nina... agora posso relaxar e aproveitar minha festa)",
+        sprite: "https://i.ibb.co/VLNBqQK/Rosalya-Baile2.png"
+      }, {
+        name: "Isa",
+        text: "(Ah, Nathaniel está se aproximando do grupo!)",
+        sprite: "https://i.ibb.co/vxkJbvkF/1039-ef7ea3bb23e03e8b.png"
+      }, {
+        name: "Nathaniel",
+        text: "Isa, parabéns! Estava te procurando, trouxe algo para você.",
+        nameColor: "#daa520",
+        sprite: "https://i.ibb.co/8Lb5Ptz4/61-Sem-T-tulo-20250614095434.png"
+      }, {
+        name: "Isa",
+        text: "(Ele estende um embrulho elegante)",
+        sprite: "https://i.ibb.co/8Lb5Ptz4/61-Sem-T-tulo-20250614095434.png"
+      }, {
+        name: "Castiel",
+        text: "Tch... olha só quem apareceu.",
+        nameColor: "#ff4d4d",
+        sprite: "https://i.ibb.co/Cv0msc9/1046-4fa606589933c050-1.png"
+      }, {
+        name: "Nathaniel",
+        text: "Olá, Castiel.",
+        nameColor: "#daa520",
+        sprite: "https://i.ibb.co/vxkJbvkF/1039-ef7ea3bb23e03e8b.png"
+      }, {
+        name: "Isa",
+        text: "(Eu pego o presente da mão do Nathaniel.)",
+        sprite: "https://i.ibb.co/8DP8zWNW/1039-ef7ea3bb23e03e8b.png"
+      }, {
+        name: "Isa",
+        text: "(Talvez não seja a melhor hora pra abrir o presente... mas também não quero parecer mal-educada)",
+        sprite: "https://i.ibb.co/spMmN7YC/49-Sem-T-tulo-20250406063555.png"
+      }, {
+        name: "Isa",
+        text: "(Ainda mais com ele do meu lado, me encarando desse jeito desconfiado.)",
+        sprite: "https://i.ibb.co/Cv0msc9/1046-4fa606589933c050-1.png"
+      }, {
+        name: "Isa",
+        text: "(Sei que o Castiel não vai com a cara do Nathaniel, e já tô sentindo aquela tensão no ar.)",
+        sprite: "https://i.ibb.co/hxMgkpSp/61-Sem-T-tulo-20250615175830.png"
+      }, {
+        name: "Isa",
+        text: "(É só um presente de aniversário, por que tudo tem que ser tão complicado?)",
+        sprite: "https://i.ibb.co/Cv0msc9/1046-4fa606589933c050-1.png"
+      }, {
+        name: "Isa",
+        text: "(Melhor abrir logo antes que essa situação fique mais estranha...)",
+        sprite: "https://i.ibb.co/spMmN7YC/49-Sem-T-tulo-20250406063555.png"
+      }, {
+        name: "Isa",
+        text: "*abrir*",
+        sprite: "https://i.ibb.co/spMmN7YC/49-Sem-T-tulo-20250406063555.png",
+        showNathanielGift: true
+      }];
+
+      const choices = [{
+        text: "Podemos te ajudar a procurar!",
+        response: {
+          name: "Lysandre",
+          text: "Seria muito gentil da sua parte",
+          nameColor: "#6c8c94",
+          sprite: "https://i.ibb.co/cvJ07Yd/Lysandre-E36.png"
+        }
+      }, {
+        text: "Onde você esteve pela última vez?",
+        response: {
+          name: "Lysandre",
+          text: "Estive no jardim, depois na cozinha, e passei pelo palco também...",
+          nameColor: "#6c8c94",
+          sprite: "https://i.ibb.co/kctG8Td/Lysandre-E35.png"
+        }
+      }, {
+        text: "Pelo menos não perdeu o convite!",
+        response: {
+          name: "Lysandre",
+          text: "Ah... isso me lembra que preciso encontrá-lo logo.",
+          nameColor: "#6c8c94",
+          sprite: "https://i.ibb.co/VStNPwn/Lysandre-E34.png"
+        }
+      }];
+
+      const choices2 = [{
+        text: "Que dia?",
+        response: {
+          name: "Castiel",
+          text: "Como se você não soubesse...",
+          nameColor: "#ff4d4d",
+          sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+        }
+      }, {
+        text: "O nosso primeiro beijo...",
+        response: {
+          name: "Castiel",
+          text: "Então você não esqueceu.",
+          nameColor: "#ff4d4d",
+          sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+        }
+      }, {
+        text: "Estamos aqui para procurar o bloco do Lysandre!",
+        response: {
+          name: "Castiel",
+          text: "O bloco pode esperar mais cinco minutos...",
+          nameColor: "#ff4d4d",
+          sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+        }
+      }];
+
+      const choices3 = [{
+        text: "Como assim?",
+        response: {
+          name: "Castiel",
+          text: "Você ainda fica vermelha igual naquele dia...",
+          nameColor: "#ff4d4d",
+          sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+        }
+      }, {
+        text: "Tipo você ainda ser um provocador?",
+        response: {
+          name: "Castiel",
+          text: "E você ainda cair nas minhas provocações...",
+          nameColor: "#ff4d4d",
+          sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+        }
+      }, {
+        text: "Devíamos realmente procurar o bloco...",
+        response: {
+          name: "Castiel",
+          text: "Tá bem... Mas depois a gente continua essa conversa.",
+          nameColor: "#ff4d4d",
+          sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+        }
+      }];
+
+      const choices4 = [{
+        text: "Lysandre...é linda...",
+        response: {
+          name: "Lysandre",
+          text: "Fico feliz que tenha gostado",
+          nameColor: "#6c8c94",
+          sprite: "https://i.ibb.co/zZd9dVv/49-f6b057ea70eff21c.png"
+        }
+      }, {
+        text: "*Abraçar ele em agradecimento*",
+        response: {
+          name: "Lysandre",
+          text: "É o mínimo que eu poderia fazer por uma amiga tão especial...",
+          nameColor: "#6c8c94",
+          sprite: "https://i.ibb.co/zZd9dVv/49-f6b057ea70eff21c.png"
+        }
+      }, {
+        text: "Você escreveu sobre todos nós...",
+        response: {
+          name: "Lysandre",
+          text: "Porque todos aqui fazem parte da sua história",
+          nameColor: "#6c8c94",
+          sprite: "https://i.ibb.co/zZd9dVv/49-f6b057ea70eff21c.png"
+        }
+      }];
+
+      const choices5 = [{
+        text: "Foi mal, Priya...",
+        response: {
+          name: "Priya", 
+          text: "Não precisa se desculpar, é parte do seu charme!",
+          nameColor: "#9AFFFF",
+          sprite: "https://i.ibb.co/Fn5XQR7/Priya-Baile9.png"
+        }
+      }, {
+        text: "Você me conhece bem demais!",
+        response: {
+          name: "Priya",
+          text: "Anos de prática tentando te achar pela escola!",
+          nameColor: "#9AFFFF", 
+          sprite: "https://i.ibb.co/Fn5XQR7/Priya-Baile9.png"
+        }
+      }, {
+        text: "O que você queria me mostrar?",
+        response: {
+          name: "Priya",
+          text: "Sempre direta ao ponto, não é?",
+          nameColor: "#9AFFFF",
+          sprite: "https://i.ibb.co/tJk1b85/Priya-Baile2a.png"
+        }
+      }];
+
+      const choices6 = [{
+        text: "O que significa a azul?",
+        response: {
+          name: "Priya",
+          text: "Proteção... Pra sempre ter alguém olhando por você",
+          nameColor: "#9AFFFF",
+          sprite: "https://i.ibb.co/tJk1b85/Priya-Baile2a.png"
+        }
+      }, {
+        text: "São lindas, Priya!",
+        response: {
+          name: "Priya",
+          text: "Assim como nossa amizade",
+          nameColor: "#9AFFFF",
+          sprite: "https://i.ibb.co/tJk1b85/Priya-Baile2a.png"
+        }
+      }, {
+        text: "*Abraçar Priya emocionada*",
+        response: {
+          name: "Priya",
+          text: "Feliz aniversário, querida",
+          nameColor: "#9AFFFF",
+          sprite: "https://i.ibb.co/tJk1b85/Priya-Baile2a.png"
+        }
+      }];
+
+      const choices7 = [{
+        text: "Nina!? Como você entrou aqui?",
+        response: {
+          name: "Nina",
+          text: "Ah... Eu vi o Lysandre entrando e...bem... o segui!",
+          nameColor: "#eb7fbc",
+          sprite: "https://i.ibb.co/ymjdBbLf/214-2b72c9cde980a344.png"
+        }
+      }, {
+        text: "Você não foi convidada...",
+        response: {
+          name: "Nina",
+          text: "Eu sei, me desculpa! Mas eu precisava ver o Lysandre!",
+          nameColor: "#eb7fbc",
+          sprite: "https://i.ibb.co/zVJ0krjg/670-e50a8a05682948f9.png"
+        }
+      }, {
+        text: "*Olhar surpresa para a Priya*",
+        response: {
+          name: "Priya",
+          text: "Parece que temos uma convidada inesperada...",
+          nameColor: "#9AFFFF",
+          sprite: "https://i.ibb.co/HprB3sR/Priya-Baile2.png"
+        }
+      }];
+
+      const choices8 = [{
+        text: "Nina, você precisa ir embora",
+        response: {
+          name: "Nina",
+          text: "Mas... mas o poema... ele precisa ouvir!",
+          nameColor: "#eb7fbc",
+          sprite: "https://i.ibb.co/zVJ0krjg/670-e50a8a05682948f9.png"
+        }
+      }, {
+        text: "Isso não está certo",
+        response: {
+          name: "Nina",
+          text: "O amor verdadeiro supera qualquer obstáculo!",
+          nameColor: "#eb7fbc",
+          sprite: "https://i.ibb.co/35YXcs60/211-a61d41057783a9e8.png"
+        }
+      }, {
+        text: "*Deixar Priya lidar com a situação*",
+        response: {
+          name: "Priya",
+          text: "Nina, precisamos conversar.",
+          nameColor: "#9AFFFF",
+          sprite: "https://i.ibb.co/HprB3sR/Priya-Baile2.png"
+        }
+      }];
+
+      const choices9 = [{
+        text: "Boa ideia, Priya",
+        response: {
+          name: "Priya",
+          text: "Podemos dar nossa opinião sincera, que tal?",
+          nameColor: "#9AFFFF",
+          sprite: "https://i.ibb.co/fQ58s7D/Priya-Baile3.png"
+        }
+      }, {
+        text: "*Concordar com a cabeça*",
+        response: {
+          name: "Priya",
+          text: "Confie em mim.",
+          nameColor: "#9AFFFF",
+          sprite: "https://i.ibb.co/Fn5XQR7/Priya-Baile9.png"
+        }
+      }, {
+        text: "Você escreve muito bem, Nina",
+        response: {
+          name: "Priya",
+          text: "E adoraríamos ouvir em primeira mão.",
+          nameColor: "#9AFFFF",
+          sprite: "https://i.ibb.co/Fn5XQR7/Priya-Baile9.png"
+        }
+      }];
+
+      const choices10 = [{
+        text: "Nina entrou sem convite na festa...",
+        response: {
+          name: "Castiel",
+          text: "Por que não estou surpreso?",
+          nameColor: "#ff4d4d",
+          sprite: "https://i.ibb.co/Cv0msc9/1046-4fa606589933c050-1.png"
+        }
+      }, {
+        text: "Estamos tentando resolver a situação",
+        response: {
+          name: "Castiel",
+          text: "Resolvo em dois minutos se quiserem.",
+          nameColor: "#ff4d4d",
+          sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+        }
+      }, {
+        text: "*Olhar preocupada para Castiel*",
+        response: {
+          name: "Castiel",
+          text: "Não se preocupe, não vou causar uma cena na sua festa.",
+          nameColor: "#ff4d4d",
+          sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+        }
+      }];
+
+      const choices11 = [{
+        text: "Castiel como supervisor? *rir*",
+        response: {
+          name: "Castiel",
+          text: "Ei, posso ser responsável quando quero.",
+          nameColor: "#ff4d4d",
+          sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+        }
+      }, {
+        text: "É uma ótima ideia!",
+        response: {
+          name: "Castiel",
+          text: "As coisas que faço por você...",
+          nameColor: "#ff4d4d",
+          sprite: "https://i.ibb.co/0JZX2Nk/1047-10773900545b8730-1.png"
+        }
+      }, {
+        text: "Você faria isso por mim, Castiel?",
+        response: {
+          name: "Castiel",
+          text: "Só porque é seu aniversário.",
+          nameColor: "#ff4d4d",
+          sprite: "https://i.ibb.co/0JZX2Nk/1047-10773900545b8730-1.png"
+        }
+      }];
+
+      const choices12 = [{
+        text: "Tenho certeza que serão fotos incríveis",
+        response: {
+          name: "Nina",
+          text: "Vou capturar os melhores momentos!",
+          nameColor: "#eb7fbc",
+          sprite: "https://i.ibb.co/ymjdBbLf/214-2b72c9cde980a344.png"
+        }
+      }, {
+        text: "Obrigada por entender, Nina",
+        response: {
+          name: "Nina",
+          text: "Agradeça à Rosa por me convencer sobre o sarau!",
+          nameColor: "#eb7fbc",
+          sprite: "https://i.ibb.co/ymjdBbLf/214-2b72c9cde980a344.png"
+        }
+      }, {
+        text: "*Trocar um olhar cúmplice com Castiel*",
+        response: {
+          name: "Castiel",
+          text: "A noite está salva, garotinha.",
+          nameColor: "#ff4d4d",
+          sprite: "https://i.ibb.co/0JZX2Nk/1047-10773900545b8730-1.png"
+        }
+      }];
+
+      const choices13 = [{
+        text: "Mal posso esperar",
+        response: {
+          name: "Castiel",
+          text: "Eu também não.",
+          nameColor: "#ff4d4d",
+          sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+        }
+      }, {
+        text: "Você sabe dançar?",
+        response: {
+          name: "Castiel",
+          text: "Você vai descobrir em breve.",
+          nameColor: "#ff4d4d",
+          sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+        }
+      }, {
+        text: "*Sorrir feliz*",
+        response: {
+          name: "Castiel",
+          text: "Esse sorriso faz tudo valer a pena.",
+          nameColor: "#ff4d4d",
+          sprite: "https://i.ibb.co/C0mFB9g/1044-9331d33063ea335d-1.png"
+        }
+      }];
+
+      let currentDialogueIndex = 0;
+      const dialogueBox = document.getElementById('dialogue-box');
+      const characterNameElement = document.getElementById('character-name');
+      const dialogueElement = document.getElementById('dialogue');
+      const characterSprite = document.getElementById('character-sprite');
+      const choicesContainer = document.getElementById('choices-container');
+
+      function showDialogue(dialogue) {
+        characterNameElement.textContent = dialogue.name;
+        dialogueElement.textContent = dialogue.text;
+        if (dialogue.nameColor) {
+          characterNameElement.style.color = dialogue.nameColor;
+        } else {
+          characterNameElement.style.color = '#9370DB';
+        }
+        if (!dialogue.keepSprite) {
+          characterSprite.src = dialogue.sprite || '';
+        }
+        if (dialogue.background) {
+          document.body.style.backgroundImage = `url('${dialogue.background}')`;
+        }
+        if (dialogue.showChoices) {
+          showChoices();
+        }
+        if (dialogue.showChoices2) {
+          showChoices2();
+        }
+        if (dialogue.showChoices3) {
+          showChoices3();
+        }
+        if (dialogue.showChoices4) {
+          showChoices4();
+        }
+        if (dialogue.showChoices5) {
+          showChoices5();
+        }
+        if (dialogue.showChoices6) {
+          showChoices6();
+        }
+        if (dialogue.showChoices7) {
+          showChoices7();
+        }
+        if (dialogue.showChoices8) {
+          showChoices8();
+        }
+        if (dialogue.showChoices9) {
+          showChoices9();
+        }
+        if (dialogue.showChoices10) {
+          showChoices10();
+        }
+        if (dialogue.showChoices11) {
+          showChoices11();
+        }
+        if (dialogue.showChoices12) {
+          showChoices12();
+        }
+        if (dialogue.showChoices13) {
+          showChoices13();
+        }
+        if (dialogue.showGift) {
+          const giftOverlay = document.getElementById('gift-overlay');
+          const giftBox = document.getElementById('gift-box');
+          const giftImage = document.getElementById('gift-image');
+          giftOverlay.style.display = 'flex';
+          giftBox.style.display = 'block';
+          giftBox.onclick = () => {
+            giftBox.style.display = 'none';
+            giftImage.style.display = 'block';
+            giftImage.src = 'https://i.ibb.co/17WmWCp/43-Sem-T-tulo-20250119155458.png';
+          };
+          const closeButton = document.querySelector('#gift-overlay #close-button');
+          closeButton.onclick = () => {
+            giftOverlay.style.display = 'none';
+            giftBox.style.display = 'none';
+            giftImage.style.display = 'none';
+          };
+        }
+        if (dialogue.showGameGift) {
+          const giftOverlay = document.createElement('div');
+          giftOverlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          `;
+          const giftBox = document.createElement('div');
+          giftBox.style.cssText = `
+            width: 200px;
+            height: 200px;
+            background: #888888;
+            cursor: pointer;
+            transition: transform 0.3s;
+          `;
+          const giftImage = document.createElement('img');
+          giftImage.style.cssText = `
+            display: none;
+            max-width: 90%;
+            max-height: 90vh;
+            border-radius: 10px;
+          `;
+          giftImage.src = 'https://i.ibb.co/y0hCXXJ/images-7.jpg';
+          const closeBtn = document.createElement('button');
+          closeBtn.innerHTML = '&#xd7;';
+          closeBtn.style.cssText = `
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 2001;
+            padding: 5px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.5);
+          `;
+          giftBox.onclick = () => {
+            giftBox.style.display = 'none';
+            giftImage.style.display = 'block';
+          };
+          closeBtn.onclick = () => {
+            document.body.removeChild(giftOverlay);
+          };
+          const container = document.createElement('div');
+          container.style.position = 'relative';
+          container.appendChild(giftBox);
+          container.appendChild(giftImage);
+          giftOverlay.appendChild(container);
+          giftOverlay.appendChild(closeBtn);
+          document.body.appendChild(giftOverlay);
+        }
+        if (dialogue.showPriyaGift) {
+          const giftOverlay = document.createElement('div');
+          giftOverlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          `;
+          const giftBox = document.createElement('div');
+          giftBox.style.cssText = `
+            width: 200px;
+            height: 200px;
+            background: #888888;
+            cursor: pointer;
+            transition: transform 0.3s;
+          `;
+          const giftImage = document.createElement('img');
+          giftImage.style.cssText = `
+            display: none;
+            max-width: 90%;
+            max-height: 90vh;
+            border-radius: 10px;
+          `;
+          giftImage.src = 'https://i.ibb.co/N2fspT3k/images-8.jpg';
+          const closeBtn = document.createElement('button');
+          closeBtn.innerHTML = '&#xd7;';
+          closeBtn.style.cssText = `
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 2001;
+            padding: 5px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.5);
+          `;
+          giftBox.onclick = () => {
+            giftBox.style.display = 'none';
+            giftImage.style.display = 'block';
+          };
+          closeBtn.onclick = () => {
+            document.body.removeChild(giftOverlay);
+          };
+          const container = document.createElement('div');
+          container.style.position = 'relative';
+          container.appendChild(giftBox);
+          container.appendChild(giftImage);
+          giftOverlay.appendChild(container);
+          giftOverlay.appendChild(closeBtn);
+          document.body.appendChild(giftOverlay);
+        }
+        if (dialogue.showNathanielGift) {
+          const giftOverlay = document.createElement('div');
+          giftOverlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          `;
+          const giftBox = document.createElement('div');
+          giftBox.style.cssText = `
+            width: 200px;
+            height: 200px;
+            background: #888888;
+            cursor: pointer;
+            transition: transform 0.3s;
+          `;
+          const giftImage = document.createElement('img');
+          giftImage.style.cssText = `
+            display: none;
+            max-width: 90%;
+            max-height: 90vh;
+            border-radius: 10px;
+          `;
+          giftImage.src = 'https://i.ibb.co/dJBdk5Zj/file-000000002858622f9d60a65942884525.png';
+          const closeBtn = document.createElement('button');
+          closeBtn.innerHTML = '&#xd7;';
+          closeBtn.style.cssText = `
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 2001;
+            padding: 5px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.5);
+          `;
+          giftBox.onclick = () => {
+            giftBox.style.display = 'none';
+            giftImage.style.display = 'block';
+          };
+          closeBtn.onclick = () => {
+            document.body.removeChild(giftOverlay);
+          };
+          const container = document.createElement('div');
+          container.style.position = 'relative';
+          container.appendChild(giftBox);
+          container.appendChild(giftImage);
+          giftOverlay.appendChild(container);
+          giftOverlay.appendChild(closeBtn);
+          document.body.appendChild(giftOverlay);
+        }
+      }
+
+      function showChoices() {
+        dialogueBox.style.display = 'none';
+        choicesContainer.style.display = 'flex';
+        choicesContainer.innerHTML = '';
+        choices.forEach((choice, index) => {
+          const button = document.createElement('button');
+          button.className = 'choice-btn';
+          button.textContent = choice.text;
+          button.onclick = () => handleChoice(index);
+          choicesContainer.appendChild(button);
+        });
+      }
+
+      function handleChoice(choiceIndex) {
+        choicesContainer.style.display = 'none';
+        dialogueBox.style.display = 'block';
+        const response = choices[choiceIndex].response;
+        if (Array.isArray(response)) {
+          showResponse(response[0]);
+          setTimeout(() => {
+            showResponse(response[1]);
+          }, 2000);
+        } else {
+          showResponse(response);
+        }
+      }
+
+      function showResponse(response) {
+        characterNameElement.textContent = response.name;
+        dialogueElement.textContent = response.text;
+        characterNameElement.style.color = response.nameColor;
+        characterSprite.src = response.sprite;
+      }
+
+      function advanceDialogue() {
+        if (currentDialogueIndex < kitchenDialogues.length) {
+          showDialogue(kitchenDialogues[currentDialogueIndex]);
+          currentDialogueIndex++;
+        }
+      }
+
+      function showChoices2() {
+        dialogueBox.style.display = 'none';
+        choicesContainer.style.display = 'flex';
+        choicesContainer.innerHTML = '';
+        choices2.forEach((choice, index) => {
+          const button = document.createElement('button');
+          button.className = 'choice-btn';
+          button.textContent = choice.text;
+          button.onclick = () => handleChoice2(index);
+          choicesContainer.appendChild(button);
+        });
+      }
+
+      function handleChoice2(choiceIndex) {
+        choicesContainer.style.display = 'none';
+        dialogueBox.style.display = 'block';
+        const response = choices2[choiceIndex].response;
+        showResponse(response);
+      }
+
+      function showChoices3() {
+        dialogueBox.style.display = 'none';
+        choicesContainer.style.display = 'flex';
+        choicesContainer.innerHTML = '';
+        choices3.forEach((choice, index) => {
+          const button = document.createElement('button');
+          button.className = 'choice-btn';
+          button.textContent = choice.text;
+          button.onclick = () => handleChoice3(index);
+          choicesContainer.appendChild(button);
+        });
+      }
+
+      function handleChoice3(choiceIndex) {
+        choicesContainer.style.display = 'none';
+        dialogueBox.style.display = 'block';
+        const response = choices3[choiceIndex].response;
+        showResponse(response);
+      }
+
+      function showChoices4() {
+        dialogueBox.style.display = 'none';
+        choicesContainer.style.display = 'flex';
+        choicesContainer.innerHTML = '';
+        choices4.forEach((choice, index) => {
+          const button = document.createElement('button');
+          button.className = 'choice-btn';
+          button.textContent = choice.text;
+          button.onclick = () => handleChoice4(index);
+          choicesContainer.appendChild(button);
+        });
+      }
+
+      function handleChoice4(choiceIndex) {
+        choicesContainer.style.display = 'none';
+        dialogueBox.style.display = 'block';
+        const response = choices4[choiceIndex].response;
+        showResponse(response);
+      }
+
+      function showChoices5() {
+        dialogueBox.style.display = 'none';
+        choicesContainer.style.display = 'flex';
+        choicesContainer.innerHTML = '';
+        choices5.forEach((choice, index) => {
+          const button = document.createElement('button');
+          button.className = 'choice-btn';
+          button.textContent = choice.text;
+          button.onclick = () => handleChoice5(index);
+          choicesContainer.appendChild(button);
+        });
+      }
+
+      function handleChoice5(choiceIndex) {
+        choicesContainer.style.display = 'none';
+        dialogueBox.style.display = 'block';
+        const response = choices5[choiceIndex].response;
+        showResponse(response);
+      }
+
+      function showChoices6() {
+        dialogueBox.style.display = 'none';
+        choicesContainer.style.display = 'flex';
+        choicesContainer.innerHTML = '';
+        choices6.forEach((choice, index) => {
+          const button = document.createElement('button');
+          button.className = 'choice-btn';
+          button.textContent = choice.text;
+          button.onclick = () => handleChoice6(index);
+          choicesContainer.appendChild(button);
+        });
+      }
+
+      function handleChoice6(choiceIndex) {
+        choicesContainer.style.display = 'none';
+        dialogueBox.style.display = 'block';
+        const response = choices6[choiceIndex].response;
+        showResponse(response);
+      }
+
+      function showChoices7() {
+        dialogueBox.style.display = 'none';
+        choicesContainer.style.display = 'flex';
+        choicesContainer.innerHTML = '';
+        choices7.forEach((choice, index) => {
+          const button = document.createElement('button');
+          button.className = 'choice-btn';
+          button.textContent = choice.text;
+          button.onclick = () => handleChoice7(index);
+          choicesContainer.appendChild(button);
+        });
+      }
+
+      function handleChoice7(choiceIndex) {
+        choicesContainer.style.display = 'none';
+        dialogueBox.style.display = 'block';
+        const response = choices7[choiceIndex].response;
+        showResponse(response);
+      }
+
+      function showChoices8() {
+        dialogueBox.style.display = 'none';
+        choicesContainer.style.display = 'flex';
+        choicesContainer.innerHTML = '';
+        choices8.forEach((choice, index) => {
+          const button = document.createElement('button');
+          button.className = 'choice-btn';
+          button.textContent = choice.text;
+          button.onclick = () => handleChoice8(index);
+          choicesContainer.appendChild(button);
+        });
+      }
+
+      function handleChoice8(choiceIndex) {
+        choicesContainer.style.display = 'none';
+        dialogueBox.style.display = 'block';
+        const response = choices8[choiceIndex].response;
+        showResponse(response);
+      }
+
+      function showChoices9() {
+        dialogueBox.style.display = 'none';
+        choicesContainer.style.display = 'flex';
+        choicesContainer.innerHTML = '';
+        choices9.forEach((choice, index) => {
+          const button = document.createElement('button');
+          button.className = 'choice-btn';
+          button.textContent = choice.text;
+          button.onclick = () => handleChoice9(index);
+          choicesContainer.appendChild(button);
+        });
+      }
+
+      function handleChoice9(choiceIndex) {
+        choicesContainer.style.display = 'none';
+        dialogueBox.style.display = 'block';
+        const response = choices9[choiceIndex].response;
+        showResponse(response);
+      }
+
+      function showChoices10() {
+        dialogueBox.style.display = 'none';
+        choicesContainer.style.display = 'flex';
+        choicesContainer.innerHTML = '';
+        choices10.forEach((choice, index) => {
+          const button = document.createElement('button');
+          button.className = 'choice-btn';
+          button.textContent = choice.text;
+          button.onclick = () => handleChoice10(index);
+          choicesContainer.appendChild(button);
+        });
+      }
+
+      function handleChoice10(choiceIndex) {
+        choicesContainer.style.display = 'none';
+        dialogueBox.style.display = 'block';
+        const response = choices10[choiceIndex].response;
+        showResponse(response);
+      }
+
+      function showChoices11() {
+        dialogueBox.style.display = 'none';
+        choicesContainer.style.display = 'flex';
+        choicesContainer.innerHTML = '';
+        choices11.forEach((choice, index) => {
+          const button = document.createElement('button');
+          button.className = 'choice-btn';
+          button.textContent = choice.text;
+          button.onclick = () => handleChoice11(index);
+          choicesContainer.appendChild(button);
+        });
+      }
+
+      function handleChoice11(choiceIndex) {
+        choicesContainer.style.display = 'none';
+        dialogueBox.style.display = 'block';
+        const response = choices11[choiceIndex].response;
+        showResponse(response);
+      }
+
+      function showChoices12() {
+        dialogueBox.style.display = 'none';
+        choicesContainer.style.display = 'flex';
+        choicesContainer.innerHTML = '';
+        choices12.forEach((choice, index) => {
+          const button = document.createElement('button');
+          button.className = 'choice-btn';
+          button.textContent = choice.text;
+          button.onclick = () => handleChoice12(index);
+          choicesContainer.appendChild(button);
+        });
+      }
+
+      function handleChoice12(choiceIndex) {
+        choicesContainer.style.display = 'none';
+        dialogueBox.style.display = 'block';
+        const response = choices12[choiceIndex].response;
+        showResponse(response);
+      }
+
+      function showChoices13() {
+        dialogueBox.style.display = 'none';
+        choicesContainer.style.display = 'flex';
+        choicesContainer.innerHTML = '';
+        choices13.forEach((choice, index) => {
+          const button = document.createElement('button');
+          button.className = 'choice-btn';
+          button.textContent = choice.text;
+          button.onclick = () => handleChoice13(index);
+          choicesContainer.appendChild(button);
+        });
+      }
+
+      function handleChoice13(choiceIndex) {
+        choicesContainer.style.display = 'none';
+        dialogueBox.style.display = 'block';
+        const response = choices13[choiceIndex].response;
+        showResponse(response);
+      }
+
+      dialogueBox.addEventListener('click', advanceDialogue);
+      advanceDialogue();
+    });
+  </script>
+</head>
+<body>
+  <div id="game-container">
+    <img id="character-sprite" alt="character">
+    <div id="dialogue-box">
+      <div id="character-name"></div>
+      <div id="dialogue"></div>
+    </div>
+    <div id="choices-container"></div>
+  </div>
+
+  <div id="gift-overlay">
+    <div class="gift-container">
+      <button id="close-button">&#xd7;</button>
+      <div id="gift-box"></div>
+      <img id="gift-image" src="https://i.ibb.co/x700PvK/OIG1.jpg" alt="Gift">
+    </div>
+  </div>
+
+  <div id="letter-overlay">
+    <div id="letter-content">
+      Para minha melhor amiga Isa!
+
+      Preparei uma cole&#xe7;&#xe3;o de roupas INCR&#xcd;VEL para voc&#xea;!
+
+      S&#xe3;o pe&#xe7;as super coloridas e estilosas que eu mesmo escolhi pensando no seu estilo &#xfa;nico. Tem at&#xe9; algumas pe&#xe7;as combinando com as minhas!
+
+      E o melhor: vamos fazer um desfile de moda particular depois! Vai ser T&#xc3;O divertido!
+
+      Afinal, ningu&#xe9;m entende mais de moda e estilo do que eu!
+
+      Com muito estilo, Alexy &#x1f499;
+      <button id="close-button" style="position: absolute; top: 10px; right: 10px;">&#xd7;</button>
+    </div>
+  </div>
+</body>
+</html>
